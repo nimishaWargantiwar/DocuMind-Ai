@@ -231,28 +231,30 @@ def render_chat_history() -> None:
 # ============================================================
 
 def workspace_chat(uploaded_files) -> None:
-    """Main chat workspace."""
+    """Main chat workspace - refined layout."""
     doc_manager = st.session_state.document_manager
     doc_count = doc_manager.count_documents()
     
     render_app_header("Chat", doc_count)
     
     if st.session_state.vector_store is None:
-        # Empty state
-        st.markdown(
-            """
-            <div style="text-align: center; padding: 3rem 2rem; margin: 2rem 0;">
-                <div style="font-size: 3rem; margin-bottom: 1rem;">📚</div>
-                <h2 style="font-size: 1.875rem; font-weight: 700; color: #111827; margin: 0 0 0.5rem 0;">
-                    Understand your documents
-                </h2>
-                <p style="font-size: 1rem; color: #667085; max-width: 500px; margin: 0 auto;">
-                    Upload PDFs and ask questions. Get answers grounded in your documents.
-                </p>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
+        # Empty state with refined layout
+        col_empty = st.container()
+        with col_empty:
+            st.markdown(
+                """
+                <div style="text-align: center; padding: 3rem 2rem; background: var(--bg-surface); border-radius: var(--radius-lg); border: 1px solid var(--border); margin: 1rem 0; line-height: 1.6;">
+                    <div style="font-size: 2.5rem; margin-bottom: 1rem; line-height: 1;">📚</div>
+                    <h2 style="font-size: 1.5rem; font-weight: 700; color: var(--text-primary); margin: 0 0 0.5rem 0;">
+                        Understand your documents
+                    </h2>
+                    <p style="font-size: 0.95rem; color: var(--text-secondary); max-width: 450px; margin: 0 auto 1.5rem;">
+                        Upload PDFs and ask questions. Get answers grounded in your documents.
+                    </p>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
         
         if uploaded_files:
             st.markdown("")
@@ -262,24 +264,39 @@ def workspace_chat(uploaded_files) -> None:
                     process_uploaded_documents(uploaded_files, st.session_state.retrieval_k)
                     st.rerun()
         else:
-            st.info("📤 Use the file uploader in the sidebar to get started")
+            st.markdown(
+                """
+                <div style="text-align: center; margin-top: 2rem; padding: 1.5rem; color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;">
+                    <p style="margin: 0;">📤 Use the file uploader above to get started</p>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
     
     else:
-        # Chat ready
+        # Chat ready - refined layout
         st.markdown(
             f"""
-            <div style="padding: 0.75rem 1rem; background: #F3F4F6; border-radius: 0.5rem; margin-bottom: 1.5rem; font-size: 0.875rem; color: #667085;">
-                <span style="font-weight: 500;">✅ Ready</span> · {st.session_state.indexed_chunk_count} chunks indexed
+            <div style="padding: 0.75rem 1rem; background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-md); margin-bottom: 1.5rem; font-size: 0.875rem; color: var(--text-secondary); display: flex; align-items: center; gap: 0.5rem;">
+                <span style="color: var(--success); font-weight: 600;">✓</span>
+                <span><strong>{st.session_state.indexed_chunk_count}</strong> chunks indexed</span>
             </div>
             """,
             unsafe_allow_html=True,
         )
         
-        # Chat history
+        # Chat history with proper spacing
         render_chat_history()
         
-        # Chat input
+        # Chat input area with proper spacing
         st.markdown("")
+        st.markdown(
+            """
+            <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border);"></div>
+            """,
+            unsafe_allow_html=True,
+        )
+        
         question = st.chat_input("Ask anything about your documents...")
         
         if question:
@@ -332,7 +349,7 @@ def workspace_chat(uploaded_files) -> None:
 # ============================================================
 
 def workspace_documents() -> None:
-    """Documents library workspace."""
+    """Documents library workspace - refined layout."""
     doc_manager = st.session_state.document_manager
     doc_count = doc_manager.count_documents()
     
@@ -341,33 +358,40 @@ def workspace_documents() -> None:
     if doc_count == 0:
         st.markdown(
             """
-            <div style="text-align: center; padding: 2rem; color: #667085;">
-                <p>No documents uploaded yet.</p>
-                <p style="font-size: 0.875rem;">Use the uploader in the sidebar.</p>
+            <div style="text-align: center; padding: 2rem; background: var(--bg-surface); border-radius: var(--radius-lg); border: 1px solid var(--border);">
+                <p style="color: var(--text-secondary); margin: 0; font-size: 0.95rem;">No documents uploaded yet.</p>
+                <p style="color: var(--text-secondary); font-size: 0.875rem; margin: 0.5rem 0 0 0;">Use the uploader in the sidebar to get started.</p>
             </div>
             """,
             unsafe_allow_html=True,
         )
     else:
-        st.markdown("**Your documents**")
+        st.markdown(
+            """
+            <div style="font-size: 0.875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary); margin-bottom: 1rem;">
+                Your documents
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
         
         for doc in doc_manager.get_all_documents():
-            col1, col2 = st.columns([1, 0.15], gap="large")
+            col1, col2 = st.columns([1, 0.08], gap="large")
             
             with col1:
                 st.markdown(
                     f"""
-                    <div style="padding: 1rem; border: 1px solid #E5E7EB; border-radius: 0.5rem; background: #FFFFFF;">
-                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem;">
-                            <div>
-                                <p style="margin: 0; font-weight: 600; color: #111827; font-size: 0.9375rem;">
+                    <div style="padding: 1rem; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--bg-surface); transition: all 0.15s ease;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div style="flex: 1;">
+                                <p style="margin: 0; font-weight: 600; color: var(--text-primary); font-size: 0.95rem;">
                                     📄 {doc.filename}
                                 </p>
-                                <p style="margin: 0.25rem 0 0 0; font-size: 0.8125rem; color: #667085;">
+                                <p style="margin: 0.5rem 0 0 0; font-size: 0.8125rem; color: var(--text-secondary);">
                                     {doc.page_count} pages · {doc.total_chunks} chunks
                                 </p>
                             </div>
-                            <span style="font-size: 0.75rem; font-weight: 600; color: #22C55E; background: #ECFDF5; padding: 0.25rem 0.5rem; border-radius: 0.25rem;">
+                            <span style="font-size: 0.75rem; font-weight: 600; color: var(--success); background: var(--success-light); padding: 0.375rem 0.625rem; border-radius: var(--radius-sm); white-space: nowrap;">
                                 ✓ Ready
                             </span>
                         </div>
@@ -377,7 +401,7 @@ def workspace_documents() -> None:
                 )
             
             with col2:
-                if st.button("🗑️", key=f"del_doc_{doc.doc_id}", help="Delete"):
+                if st.button("🗑️", key=f"del_doc_{doc.doc_id}", help="Delete", use_container_width=True):
                     doc_manager.remove_document(doc.doc_id)
                     st.rerun()
 
@@ -387,25 +411,35 @@ def workspace_documents() -> None:
 # ============================================================
 
 def workspace_analyze() -> None:
-    """Document analysis workspace."""
+    """Document analysis workspace - refined layout."""
     doc_manager = st.session_state.document_manager
     doc_count = doc_manager.count_documents()
     
     render_app_header("Analyze", doc_count)
     
     if doc_count == 0:
-        st.info("Upload documents first to analyze them.")
+        st.info("📤 Upload documents first to analyze them.")
         return
     
     if doc_manager.count_selected() == 0:
-        st.info("Select documents in the sidebar to analyze them.")
+        st.info("📌 Select documents in the sidebar to analyze them.")
         return
     
-    st.markdown("**Document analysis**")
+    st.markdown(
+        """
+        <div style="font-size: 0.875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary); margin-bottom: 1rem;">
+            Document analysis
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
     
     selected_docs = doc_manager.get_selected_documents()
-    doc_names = ", ".join([d.filename[:20] for d in selected_docs])
-    st.caption(f"📄 {doc_names}")
+    doc_names = ", ".join([d.filename[:25] for d in selected_docs])
+    st.markdown(
+        f"<p style='font-size: 0.875rem; color: var(--text-secondary); margin: 0 0 1.5rem 0;'>📄 {doc_names}</p>",
+        unsafe_allow_html=True,
+    )
     
     tabs = st.tabs(["Summary", "Key Points", "Entities"])
     
@@ -450,39 +484,56 @@ def workspace_analyze() -> None:
 # ============================================================
 
 def workspace_compare() -> None:
-    """Document comparison workspace."""
+    """Document comparison workspace - refined layout."""
     doc_manager = st.session_state.document_manager
     doc_count = doc_manager.count_documents()
     
     render_app_header("Compare", doc_count)
     
     if doc_count < 2:
-        st.info("Upload at least 2 documents to compare them.")
+        st.info("📤 Upload at least 2 documents to compare them.")
         return
     
-    st.markdown("**Compare documents**")
+    st.markdown(
+        """
+        <div style="font-size: 0.875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary); margin-bottom: 1.5rem;">
+            Select documents
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
     
     docs = doc_manager.get_all_documents()
-    col1, col2 = st.columns(2, gap="large")
+    doc_names = [d.filename for d in docs]
+    
+    col1, col2, col3 = st.columns([1, 0.5, 1], gap="large")
     
     with col1:
+        st.markdown("<p style='font-size: 0.875rem; font-weight: 500; color: var(--text-secondary); margin: 0 0 0.5rem 0;'>Document A</p>", unsafe_allow_html=True)
         doc_a = st.selectbox(
             "Document A",
-            [d.filename for d in docs],
+            doc_names,
             key="doc_a",
             label_visibility="collapsed",
         )
     
     with col2:
+        st.markdown("<p style='text-align: center; margin-top: 1.25rem;' >vs</p>", unsafe_allow_html=True)
+    
+    with col3:
+        st.markdown("<p style='font-size: 0.875rem; font-weight: 500; color: var(--text-secondary); margin: 0 0 0.5rem 0;'>Document B</p>", unsafe_allow_html=True)
         doc_b = st.selectbox(
             "Document B",
-            [d.filename for d in docs if d.filename != doc_a],
+            [d for d in doc_names if d != doc_a],
             key="doc_b",
             label_visibility="collapsed",
         )
     
-    if st.button("Compare documents", use_container_width=True):
-        st.info("Document comparison coming soon")
+    st.markdown("")
+    col1, col2, col3 = st.columns([1, 1.5, 1])
+    with col2:
+        if st.button("Compare documents", use_container_width=True, key="compare_btn"):
+            st.info("Document comparison coming soon")
 
 
 # ============================================================
@@ -490,7 +541,7 @@ def workspace_compare() -> None:
 # ============================================================
 
 def workspace_evaluation() -> None:
-    """RAG evaluation workspace."""
+    """RAG evaluation workspace - refined layout."""
     render_app_header("Evaluation")
     
     if "evaluator" not in st.session_state:
@@ -500,14 +551,29 @@ def workspace_evaluation() -> None:
     evaluator = st.session_state.evaluator
     
     if not evaluator.results:
-        st.info("Evaluation metrics will appear after asking questions.")
+        st.markdown(
+            """
+            <div style="text-align: center; padding: 2rem; background: var(--bg-surface); border-radius: var(--radius-lg); border: 1px solid var(--border);">
+                <p style="color: var(--text-secondary); margin: 0; font-size: 0.95rem;">No evaluation data yet.</p>
+                <p style="color: var(--text-secondary); font-size: 0.875rem; margin: 0.5rem 0 0 0;">Metrics will appear after asking questions.</p>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
         return
     
-    st.markdown("**Quality metrics**")
+    st.markdown(
+        """
+        <div style="font-size: 0.875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary); margin-bottom: 1.5rem;">
+            Quality metrics
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
     
     metrics = evaluator.compute_metrics()
     
-    col1, col2, col3, col4 = st.columns(4, gap="large")
+    col1, col2, col3, col4 = st.columns(4, gap="medium")
     
     with col1:
         st.metric(
@@ -537,9 +603,12 @@ def workspace_evaluation() -> None:
             label_visibility="collapsed",
         )
     
-    if st.button("Reset metrics", use_container_width=False):
-        evaluator.reset()
-        st.rerun()
+    st.markdown("")
+    col1, col2, col3 = st.columns([1, 1.5, 1])
+    with col2:
+        if st.button("Reset metrics", use_container_width=True, key="reset_eval_btn"):
+            evaluator.reset()
+            st.rerun()
 
 
 # ============================================================
@@ -547,19 +616,35 @@ def workspace_evaluation() -> None:
 # ============================================================
 
 def render_sidebar() -> None:
-    """Render navigation sidebar."""
+    """Render navigation sidebar - refined layout with app name and fixed button states."""
     with st.sidebar:
+        # APP NAME AT TOP
         st.markdown(
             """
-            <div style="margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid #E5E7EB;">
-                <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #667085; margin-bottom: 1rem;">
-                    Workspace
+            <div style="margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border);">
+                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                    <span style="font-size: 1.125rem; font-weight: 800; color: var(--text-primary);">✦</span>
+                    <span style="font-size: 1.125rem; font-weight: 800; color: var(--text-primary);">DocuMind AI</span>
                 </div>
+                <p style="font-size: 0.75rem; color: var(--text-secondary); font-weight: 500; margin: 0.25rem 0 0 0;">
+                    AI-Powered Document Intelligence
+                </p>
             </div>
             """,
             unsafe_allow_html=True,
         )
         
+        # WORKSPACE LABEL
+        st.markdown(
+            """
+            <div style="font-size: var(--text-xs); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary); margin-bottom: 0.75rem;">
+                Workspace
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+        
+        # Navigation buttons with proper states
         workspaces = [
             ("💬", "Chat"),
             ("📚", "Documents"),
@@ -569,6 +654,23 @@ def render_sidebar() -> None:
         ]
         
         for icon, name in workspaces:
+            is_active = st.session_state.current_workspace == name
+            
+            # Create custom styled button for active/inactive states
+            if is_active:
+                btn_style = """
+                <style>
+                .nav-btn-active { 
+                    background-color: var(--accent) !important; 
+                    color: white !important;
+                }
+                .nav-btn-active:hover {
+                    background-color: var(--accent-hover) !important;
+                }
+                </style>
+                """
+                st.markdown(btn_style, unsafe_allow_html=True)
+            
             if st.button(
                 f"{icon} {name}",
                 key=f"ws_{name}",
@@ -580,53 +682,63 @@ def render_sidebar() -> None:
         
         st.markdown("---")
         
-        # File uploader
+        # DOCUMENT MANAGEMENT
         st.markdown(
             """
-            <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #667085; margin-bottom: 0.75rem;">
-                Upload
+            <div style="font-size: var(--text-xs); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary); margin-bottom: 0.75rem;">
+                Documents
             </div>
             """,
             unsafe_allow_html=True,
         )
         
-        # Document list with selection
         doc_manager = st.session_state.document_manager
-        if doc_manager.count_documents() > 0:
+        doc_count = doc_manager.count_documents()
+        
+        if doc_count > 0:
             st.markdown(
-                f"<p style='font-size: 0.875rem; color: #667085;'>{doc_manager.count_documents()} uploaded</p>",
+                f"<p style='font-size: var(--text-xs); color: var(--text-secondary); margin: 0.5rem 0 0.75rem 0;'><strong>{doc_count}</strong> uploaded</p>",
                 unsafe_allow_html=True,
             )
             
             for doc in doc_manager.get_all_documents():
-                is_selected = st.checkbox(
-                    doc.filename,
-                    value=doc.doc_id in doc_manager.selected_doc_ids,
-                    key=f"sel_{doc.doc_id}",
-                )
-                if is_selected:
-                    doc_manager.select_document(doc.doc_id)
-                else:
-                    doc_manager.deselect_document(doc.doc_id)
+                col1, col2 = st.columns([1, 0.2], gap="small")
+                with col1:
+                    is_selected = st.checkbox(
+                        doc.filename,
+                        value=doc.doc_id in doc_manager.selected_doc_ids,
+                        key=f"sel_{doc.doc_id}",
+                        label_visibility="collapsed",
+                    )
+                    if is_selected:
+                        doc_manager.select_document(doc.doc_id)
+                    else:
+                        doc_manager.deselect_document(doc.doc_id)
+                    st.caption(doc.filename)
+        else:
+            st.caption("No documents")
         
         st.markdown("---")
         
-        # Settings
+        # SETTINGS
         st.markdown(
             """
-            <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #667085; margin-bottom: 0.75rem;">
+            <div style="font-size: var(--text-xs); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary); margin-bottom: 0.75rem;">
                 Settings
             </div>
             """,
             unsafe_allow_html=True,
         )
         
-        with st.expander("⚙️ Advanced"):
+        with st.expander("⚙️ Advanced", expanded=False):
+            st.markdown("<p style='font-size: var(--text-xs); font-weight: 600; color: var(--text-secondary); margin: 0 0 0.5rem 0;'>LLM Configuration</p>", unsafe_allow_html=True)
+            
             st.session_state.api_key = st.text_input(
                 "API Key",
                 type="password",
                 value=st.session_state.api_key,
                 help="Leave blank to use GROQ_API_KEY",
+                placeholder="sk-...",
             )
             
             st.session_state.retrieval_k = st.slider(
@@ -634,11 +746,13 @@ def render_sidebar() -> None:
                 min_value=2,
                 max_value=8,
                 value=st.session_state.retrieval_k,
+                help="More context = slower",
             )
             
             st.session_state.use_hybrid = st.checkbox(
                 "Hybrid retrieval",
                 value=st.session_state.use_hybrid,
+                help="Combine semantic + keyword",
             )
             
             st.session_state.temperature = st.slider(
@@ -647,31 +761,41 @@ def render_sidebar() -> None:
                 max_value=1.0,
                 value=st.session_state.temperature,
                 step=0.05,
+                help="0=factual, 1=creative",
             )
         
         st.markdown("---")
         
-        # Status
+        # STATUS
+        st.markdown(
+            """
+            <div style="font-size: var(--text-xs); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary); margin-bottom: 0.75rem;">
+                Status
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+        
         groq_ok = bool(os.getenv("GROQ_API_KEY"))
         openai_ok = bool(st.session_state.api_key.strip() or os.getenv("OPENAI_API_KEY"))
         
         if groq_ok or openai_ok:
-            st.success("✅ LLM ready")
+            st.success("✓ LLM ready")
         else:
-            st.warning("⚠️ Configure API key")
+            st.warning("⚠ Configure API key")
 
 
 def render_app_header(workspace: str, document_count: int = 0) -> None:
-    """Render workspace header."""
+    """Render workspace header - refined styling."""
     st.markdown(
         f"""
-        <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 0; border-bottom: 1px solid #E5E7EB; margin-bottom: 2rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 0; border-bottom: 1px solid var(--border); margin-bottom: 1.5rem;">
             <div style="display: flex; align-items: center; gap: 0.5rem;">
-                <span style="font-size: 1rem; font-weight: 700; color: #667085; text-transform: uppercase; letter-spacing: 0.05em;">
+                <span style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary);">
                     {workspace}
                 </span>
             </div>
-            {f'<div style="color: #667085; font-size: 0.875rem;">{document_count} documents</div>' if document_count > 0 else ''}
+            {f'<div style="color: var(--text-secondary); font-size: 0.875rem;">📄 {document_count}</div>' if document_count > 0 else ''}
         </div>
         """,
         unsafe_allow_html=True,
@@ -679,27 +803,81 @@ def render_app_header(workspace: str, document_count: int = 0) -> None:
 
 
 def render_styles() -> None:
-    """Render minimal, professional styles."""
+    """Render refined color polish pass - sophisticated indigo/blue palette with subtle tinted backgrounds."""
     st.markdown(
         """
         <style>
-            /* ===== COLOR PALETTE (LIGHT, MINIMAL, EDITORIAL) ===== */
+            /* ===== DESIGN TOKENS - COLOR POLISH PASS ===== */
             :root {
-                --bg-primary: #F7F8FA;
+                /* MAIN BACKGROUNDS - Subtle blue-tinted off-white */
+                --bg-primary: #F8F9FC;
                 --bg-surface: #FFFFFF;
-                --text-primary: #111827;
-                --text-secondary: #667085;
+                --bg-subtle: #F5F7FA;
+                --bg-accent-light: #F0F4FF;
+                
+                /* SIDEBAR - Slightly distinct cool tint */
+                --bg-sidebar: #F9FAFB;
+                
+                /* TEXT COLORS - Navy and blue-gray hierarchy */
+                --text-primary: #0F172A;
+                --text-secondary: #475569;
+                --text-tertiary: #94A3B8;
+                --text-muted: #CBD5E1;
+                
+                /* PRIMARY BRAND COLOR - Professional indigo */
                 --accent: #4F46E5;
-                --border: #E5E7EB;
+                --accent-hover: #4338CA;
+                --accent-dark: #312E81;
+                --accent-light: #F0F4FF;
+                --accent-lighter: #F5F8FF;
+                
+                /* BORDERS - Subtle blue-gray tinted */
+                --border: #E2E8F0;
+                --border-light: #F1F5F9;
+                --border-accent: #DDD6FE;
+                
+                /* STATUS COLORS - Soft semantic colors */
                 --success: #22C55E;
+                --success-light: #ECFDF5;
                 --warning: #F59E0B;
+                --warning-light: #FFFBEB;
                 --error: #EF4444;
+                --error-light: #FEF2F2;
+                --info: #3B82F6;
+                --info-light: #EFF6FF;
+                
+                /* SPACING SYSTEM */
+                --spacing-xs: 0.25rem;
+                --spacing-sm: 0.5rem;
+                --spacing-md: 1rem;
+                --spacing-lg: 1.5rem;
+                --spacing-xl: 2rem;
+                --spacing-2xl: 3rem;
+                
+                /* BORDER RADIUS */
+                --radius-sm: 0.375rem;
+                --radius-md: 0.5rem;
+                --radius-lg: 0.75rem;
+                
+                /* FONT SIZING */
+                --text-xs: 0.75rem;
+                --text-sm: 0.875rem;
+                --text-base: 1rem;
+                --text-lg: 1.125rem;
+                --text-xl: 1.25rem;
+                --text-2xl: 1.5rem;
+                --text-3xl: 1.875rem;
             }
             
             /* ===== GLOBAL STYLES ===== */
+            * {
+                box-sizing: border-box;
+            }
+            
             body {
                 background-color: var(--bg-primary);
                 color: var(--text-primary);
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
             }
             
             .main {
@@ -707,12 +885,58 @@ def render_styles() -> None:
             }
             
             .block-container {
-                max-width: 900px;
-                padding-top: 2rem !important;
+                max-width: 1000px !important;
+                padding-left: 2rem !important;
+                padding-right: 2rem !important;
+                padding-top: 1.5rem !important;
                 padding-bottom: 2rem !important;
+                margin-left: auto !important;
+                margin-right: auto !important;
+            }
+            
+            /* ===== TYPOGRAPHY ===== */
+            h1, h2, h3, h4, h5, h6 {
+                color: var(--text-primary) !important;
+                font-weight: 700 !important;
+                letter-spacing: -0.01em !important;
+                margin-bottom: var(--spacing-md) !important;
+            }
+            
+            h1 {
+                font-size: var(--text-3xl) !important;
+                margin-bottom: var(--spacing-lg) !important;
+                color: var(--text-primary) !important;
+            }
+            
+            h2 {
+                font-size: var(--text-2xl) !important;
+                margin-bottom: var(--spacing-md) !important;
+                color: var(--text-primary) !important;
+            }
+            
+            h3 {
+                font-size: var(--text-xl) !important;
+                margin-bottom: var(--spacing-md) !important;
+                color: var(--text-primary) !important;
+            }
+            
+            h4 {
+                font-size: var(--text-lg) !important;
+                margin-bottom: var(--spacing-sm) !important;
+                color: var(--text-primary) !important;
+            }
+            
+            p {
+                color: var(--text-primary) !important;
+                line-height: 1.6 !important;
+                margin-bottom: var(--spacing-md) !important;
             }
             
             /* ===== MARKDOWN ===== */
+            .stMarkdown {
+                color: var(--text-primary) !important;
+            }
+            
             .stMarkdown h1, .stMarkdown h2, .stMarkdown h3, .stMarkdown h4, .stMarkdown h5, .stMarkdown h6 {
                 color: var(--text-primary) !important;
                 font-weight: 700 !important;
@@ -723,93 +947,385 @@ def render_styles() -> None:
                 line-height: 1.6 !important;
             }
             
-            /* ===== SIDEBAR ===== */
+            .stMarkdown strong {
+                font-weight: 600 !important;
+                color: var(--text-primary) !important;
+            }
+            
+            /* ===== SIDEBAR - Color Polish ===== */
             section[data-testid="stSidebar"] {
-                background-color: var(--bg-surface) !important;
+                background-color: var(--bg-sidebar) !important;
                 border-right: 1px solid var(--border) !important;
+                padding: var(--spacing-md) !important;
+            }
+            
+            section[data-testid="stSidebar"] .block-container {
+                padding: 0 !important;
+                max-width: 100% !important;
             }
             
             section[data-testid="stSidebar"] * {
                 color: var(--text-primary) !important;
             }
             
-            /* ===== BUTTONS ===== */
+            section[data-testid="stSidebar"] h1, 
+            section[data-testid="stSidebar"] h2, 
+            section[data-testid="stSidebar"] h3 {
+                margin-top: 0 !important;
+            }
+            
+            /* Sidebar app name with brand color accent */
+            section[data-testid="stSidebar"] > div > div > div:first-child .stMarkdown {
+                margin-bottom: 1rem !important;
+                padding-bottom: 1rem !important;
+                border-bottom: 1px solid var(--border) !important;
+            }
+            
+            /* ===== BUTTONS - Color Hierarchy ===== */
             .stButton button {
-                background-color: var(--accent) !important;
-                color: white !important;
-                border: none !important;
-                font-weight: 600 !important;
-                border-radius: 0.375rem !important;
-            }
-            
-            .stButton button:hover {
-                background-color: #4338CA !important;
-            }
-            
-            /* ===== INPUTS ===== */
-            .stTextInput input,
-            .stTextArea textarea,
-            .stChatInput input,
-            .stSelectbox select {
                 background-color: var(--bg-surface) !important;
                 color: var(--text-primary) !important;
                 border: 1px solid var(--border) !important;
-                border-radius: 0.375rem !important;
+                font-weight: 600 !important;
+                font-size: var(--text-sm) !important;
+                padding: 0.625rem 1.25rem !important;
+                height: 2.25rem !important;
+                border-radius: var(--radius-md) !important;
+                letter-spacing: 0 !important;
+                text-transform: none !important;
+                transition: all 0.15s ease !important;
+                cursor: pointer !important;
+                display: inline-flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                white-space: nowrap !important;
+                line-height: 1 !important;
             }
             
-            /* ===== CHAT ===== */
-            .stChatMessage {
+            .stButton button:hover:not(:disabled) {
+                background-color: var(--bg-subtle) !important;
+                border-color: var(--accent) !important;
+                color: var(--accent) !important;
+                transform: translateY(-1px) !important;
+            }
+            
+            .stButton button:active:not(:disabled) {
+                transform: translateY(0) !important;
+                background-color: var(--bg-surface) !important;
+            }
+            
+            .stButton button:disabled {
+                background-color: var(--border-light) !important;
+                color: var(--text-tertiary) !important;
+                border-color: var(--border) !important;
+                cursor: not-allowed !important;
+            }
+            
+            /* SIDEBAR BUTTONS - Navigation with color polish */
+            section[data-testid="stSidebar"] .stButton button {
                 background-color: transparent !important;
+                color: var(--text-secondary) !important;
+                border: 1px solid transparent !important;
+                font-weight: 600 !important;
+                transition: all 0.2s ease !important;
+            }
+            
+            section[data-testid="stSidebar"] .stButton button:hover {
+                background-color: var(--accent-light) !important;
+                color: var(--accent) !important;
+                border-color: transparent !important;
+            }
+            
+            /* SECONDARY BUTTONS */
+            .stButton button[data-testid="baseButton-secondary"] {
+                background-color: var(--bg-surface) !important;
+                color: var(--text-primary) !important;
+                border: 1px solid var(--border) !important;
+            }
+            
+            .stButton button[data-testid="baseButton-secondary"]:hover:not(:disabled) {
+                background-color: var(--bg-subtle) !important;
+                border-color: var(--accent) !important;
+                color: var(--accent) !important;
+                box-shadow: none !important;
+            }
+            
+            /* ===== INPUT FIELDS - Color Polish ===== */
+            .stTextInput > div > div > input,
+            .stTextArea > div > div > textarea,
+            .stSelectbox > div > div > select,
+            .stNumberInput > div > div > input {
+                background-color: var(--bg-surface) !important;
+                color: var(--text-primary) !important;
+                border: 1px solid var(--border) !important;
+                border-radius: var(--radius-sm) !important;
+                font-size: var(--text-sm) !important;
+                padding: 0.5rem 0.75rem !important;
+                line-height: 1.5 !important;
+                transition: border-color 0.15s ease, box-shadow 0.15s ease !important;
+            }
+            
+            .stTextInput > div > div > input::placeholder,
+            .stTextArea > div > div > textarea::placeholder {
+                color: var(--text-tertiary) !important;
+            }
+            
+            .stTextInput > div > div > input:focus,
+            .stTextArea > div > div > textarea:focus,
+            .stSelectbox > div > div > select:focus,
+            .stNumberInput > div > div > input:focus {
+                border-color: var(--accent) !important;
+                box-shadow: 0 0 0 3px var(--accent-light) !important;
+                outline: none !important;
+                background-color: var(--bg-accent-lighter) !important;
+            }
+            
+            /* ===== CHAT INPUT ===== */
+            .stChatInput input {
+                background-color: var(--bg-surface) !important;
+                color: var(--text-primary) !important;
+                border: 1px solid var(--border) !important;
+                border-radius: var(--radius-md) !important;
+                font-size: var(--text-sm) !important;
+                padding: 0.75rem 1rem !important;
+                line-height: 1.5 !important;
+            }
+            
+            .stChatInput input::placeholder {
+                color: var(--text-tertiary) !important;
+            }
+            
+            .stChatInput input:focus {
+                border-color: var(--accent) !important;
+                box-shadow: 0 0 0 3px var(--accent-light) !important;
+                background-color: var(--bg-accent-lighter) !important;
+            }
+            
+            /* ===== CHECKBOXES ===== */
+            .stCheckbox > label {
+                font-size: var(--text-sm) !important;
+                color: var(--text-primary) !important;
+                font-weight: 500 !important;
+                cursor: pointer !important;
+                margin-bottom: 0 !important;
+                display: flex !important;
+                align-items: center !important;
+                gap: 0.5rem !important;
+            }
+            
+            /* ===== SLIDERS - Color Polish ===== */
+            .stSlider > div > div {
+                padding: var(--spacing-md) 0 !important;
+            }
+            
+            .stSlider label {
+                font-size: var(--text-sm) !important;
+                font-weight: 600 !important;
+                color: var(--text-primary) !important;
+                margin-bottom: var(--spacing-sm) !important;
+            }
+            
+            .stSlider [data-testid="stSliderThumb"] {
+                background-color: var(--accent) !important;
             }
             
             /* ===== EXPANDERS ===== */
             .streamlit-expanderHeader {
                 background-color: var(--bg-surface) !important;
                 border: 1px solid var(--border) !important;
+                border-radius: var(--radius-sm) !important;
+                padding: 0.75rem 1rem !important;
                 color: var(--text-primary) !important;
+                font-weight: 600 !important;
+                font-size: var(--text-sm) !important;
+                transition: all 0.15s ease !important;
+            }
+            
+            .streamlit-expanderHeader:hover {
+                background-color: var(--bg-primary) !important;
+                border-color: var(--accent) !important;
+            }
+            
+            .streamlit-expanderHeader p {
+                margin: 0 !important;
             }
             
             /* ===== METRICS ===== */
             .stMetric {
                 background-color: var(--bg-surface) !important;
                 border: 1px solid var(--border) !important;
-                border-radius: 0.375rem !important;
+                border-radius: var(--radius-md) !important;
                 padding: 1rem !important;
+            }
+            
+            .stMetric > div > label {
+                font-size: var(--text-xs) !important;
+                font-weight: 700 !important;
+                text-transform: uppercase !important;
+                letter-spacing: 0.05em !important;
+                color: var(--text-secondary) !important;
+                margin-bottom: var(--spacing-sm) !important;
+            }
+            
+            .stMetric > div > div > div:first-child {
+                font-size: var(--text-2xl) !important;
+                font-weight: 700 !important;
+                color: var(--accent) !important;
+                line-height: 1.2 !important;
+            }
+            
+            .stMetric > div > div > div:last-child {
+                font-size: var(--text-xs) !important;
+                color: var(--text-secondary) !important;
+                margin-top: var(--spacing-xs) !important;
             }
             
             /* ===== STATUS MESSAGES ===== */
             .stSuccess {
-                background-color: #ECFDF5 !important;
+                background-color: var(--success-light) !important;
                 border-left: 3px solid var(--success) !important;
+                border-radius: var(--radius-md) !important;
+                padding: 0.75rem 1rem !important;
                 color: var(--text-primary) !important;
+                font-size: var(--text-sm) !important;
             }
             
             .stError {
-                background-color: #FEF2F2 !important;
+                background-color: var(--error-light) !important;
                 border-left: 3px solid var(--error) !important;
+                border-radius: var(--radius-md) !important;
+                padding: 0.75rem 1rem !important;
                 color: var(--text-primary) !important;
+                font-size: var(--text-sm) !important;
             }
             
             .stWarning {
-                background-color: #FFFBEB !important;
+                background-color: var(--warning-light) !important;
                 border-left: 3px solid var(--warning) !important;
+                border-radius: var(--radius-md) !important;
+                padding: 0.75rem 1rem !important;
                 color: var(--text-primary) !important;
+                font-size: var(--text-sm) !important;
             }
             
             .stInfo {
-                background-color: #EEF2FF !important;
+                background-color: var(--info-light) !important;
                 border-left: 3px solid var(--accent) !important;
+                border-radius: var(--radius-md) !important;
+                padding: 0.75rem 1rem !important;
                 color: var(--text-primary) !important;
+                font-size: var(--text-sm) !important;
             }
             
-            /* ===== CHECKBOXES & LABELS ===== */
-            .stCheckbox label, .stSelectbox label, .stRadio label {
+            /* ===== CHAT MESSAGES ===== */
+            .stChatMessage {
+                background-color: transparent !important;
+                padding: 0 !important;
+                margin-bottom: var(--spacing-lg) !important;
+            }
+            
+            .stChatMessage > div {
+                padding: 0 !important;
+                background-color: transparent !important;
+            }
+            
+            .stChatMessage p {
                 color: var(--text-primary) !important;
+                margin: 0 !important;
             }
             
             /* ===== SPINNER ===== */
-            .stSpinner div {
+            .stSpinner {
+                text-align: center !important;
+                padding: var(--spacing-lg) 0 !important;
+            }
+            
+            .stSpinner > div > div {
                 border-color: var(--accent) !important;
+            }
+            
+            /* ===== DIVIDER ===== */
+            hr {
+                border: none !important;
+                border-top: 1px solid var(--border) !important;
+                margin: var(--spacing-lg) 0 !important;
+            }
+            
+            /* ===== TABS ===== */
+            .stTabs [role="tablist"] {
+                border-bottom: 1px solid var(--border) !important;
+                gap: var(--spacing-md) !important;
+            }
+            
+            .stTabs [role="tab"] {
+                padding: 0.75rem 1rem !important;
+                font-weight: 600 !important;
+                font-size: var(--text-sm) !important;
+                color: var(--text-secondary) !important;
+                border-bottom: 2px solid transparent !important;
+                margin-bottom: -1px !important;
+                background-color: transparent !important;
+                transition: all 0.15s ease !important;
+                cursor: pointer !important;
+            }
+            
+            .stTabs [role="tab"]:hover:not([aria-selected="true"]) {
+                color: var(--text-primary) !important;
+            }
+            
+            .stTabs [role="tab"][aria-selected="true"] {
+                color: var(--accent) !important;
+                border-bottom-color: var(--accent) !important;
+            }
+            
+            /* ===== FILE UPLOADER ===== */
+            .stFileUploader {
+                padding: 0 !important;
+            }
+            
+            .stFileUploader > section > div {
+                border: 2px dashed var(--border) !important;
+                border-radius: var(--radius-lg) !important;
+                background-color: var(--bg-surface) !important;
+                padding: 2rem !important;
+                text-align: center !important;
+                transition: all 0.15s ease !important;
+            }
+            
+            .stFileUploader > section > div:hover {
+                border-color: var(--accent) !important;
+                background-color: var(--accent-light) !important;
+            }
+            
+            /* ===== LABELS & CAPTIONS ===== */
+            .stCaption {
+                color: var(--text-secondary) !important;
+                font-size: var(--text-xs) !important;
+            }
+            
+            label {
+                color: var(--text-primary) !important;
+                font-size: var(--text-sm) !important;
+                font-weight: 500 !important;
+            }
+            
+            /* ===== RESPONSIVE ===== */
+            @media (max-width: 768px) {
+                .block-container {
+                    padding-left: 1rem !important;
+                    padding-right: 1rem !important;
+                    max-width: 100% !important;
+                }
+                
+                section[data-testid="stSidebar"] {
+                    padding: 1rem !important;
+                }
+                
+                .stButton button {
+                    height: 2.125rem !important;
+                    font-size: var(--text-xs) !important;
+                    padding: 0.5rem 1rem !important;
+                }
             }
         </style>
         """,
@@ -834,13 +1350,37 @@ def main() -> None:
     render_styles()
     render_sidebar()
     
-    # File uploader in top area
+    # TOP ACTION AREA: File uploader + Size info
+    st.markdown(
+        """
+        <div style="margin-bottom: 1rem;">
+            <div style="font-size: 0.875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary); margin-bottom: 0.75rem;">
+                Upload documents
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+    
+    # File uploader
     uploaded_files = st.file_uploader(
         "📤 Upload PDF documents",
         type=["pdf"],
         accept_multiple_files=True,
         label_visibility="collapsed",
     )
+    
+    # File size information
+    st.markdown(
+        """
+        <p style="font-size: 0.8125rem; color: var(--text-tertiary); margin: 0.5rem 0 0 0;">
+            Maximum file size: 200 MB per file
+        </p>
+        """,
+        unsafe_allow_html=True,
+    )
+    
+    st.markdown("")
     
     if uploaded_files:
         for uploaded_file in uploaded_files:
